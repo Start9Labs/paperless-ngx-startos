@@ -34,7 +34,6 @@ verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **Default branch is `main`, not `master`.** Its CI workflows reference `main`; leave them.
 - **Don't make `PAPERLESS_CORS_ALLOWED_HOSTS`/`PAPERLESS_CSRF_TRUSTED_ORIGINS` static** — a list that misses the browser's origin rejects logins as CSRF failures, which looks like a wrong password.
 - **Keep `runAsInit: true` on the application daemon** — the image supervises its own web server, workers and scheduler.
 - **Don't give Redis a volume or turn its persistence on** — it is a work queue whose contents are re-derivable.

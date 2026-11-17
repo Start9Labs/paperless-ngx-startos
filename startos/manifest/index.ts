@@ -5,7 +5,7 @@ export const manifest = setupManifest({
   id: 'paperless-ngx',
   title: 'Paperless-ngx',
   license: 'GPL-3.0',
-  packageRepo: 'https://github.com/Start9-Community/paperless-startos',
+  packageRepo: 'https://github.com/Start9Labs/paperless-ngx-startos',
   upstreamRepo: 'https://github.com/paperless-ngx/paperless-ngx',
   marketingUrl: 'https://docs.paperless-ngx.com/',
   donationUrl: 'https://github.com/sponsors/paperless-ngx',
