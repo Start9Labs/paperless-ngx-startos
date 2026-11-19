@@ -41,5 +41,5 @@ With the service stopped, run **Check Document Integrity** to see whether any do
 
 ## Documentation
 
-- [Paperless-ngx docs](https://docs.paperless-ngx.com/) — usage, configuration, and the consume directory workflow.
+- [Paperless-ngx docs](https://docs.paperless-ngx.com/) ([Markdown source](https://github.com/paperless-ngx/paperless-ngx/tree/dev/docs)) — usage, configuration, and the consume directory workflow.
 - [Upstream repository](https://github.com/paperless-ngx/paperless-ngx).
