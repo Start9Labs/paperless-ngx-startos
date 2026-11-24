@@ -130,11 +130,11 @@ Redis is internal, on the service's own loopback, and is not exported.
 
 ## Installation and First-Run Flow
 
-Install generates the secret key and then does something unusual: **it starts the whole stack once, waits for it to become healthy, and shuts it down again.**
+Install generates the secret key and then **creates the database without starting the service**: a temporary container hands the volume's folders to the `paperless` user, runs Django's migrations and exits. The web interface never runs before an admin account exists.
 
-That is not belt-and-braces — it resolves a genuine ordering problem. The admin password is set by an action that operates on the database directly, and the task demanding it is `critical`, which blocks the service from starting. Without the bootstrap the two would deadlock: the action needs a database, the database is created by a first start, and the first start is forbidden by the task. Booting once at install creates the database, and the daemon's own health check is the signal that migrations have finished.
+That resolves a genuine ordering problem. The admin password is set by an action that operates on the database directly, and the task demanding it is `critical`, which blocks the service from starting. Without the bootstrap the two would deadlock: the action needs a database, and the first start that would otherwise create it is forbidden by the task.
 
-**Migrating on first boot can take a while**, so it is surfaced as a named install phase rather than as an unexplained wait.
+**Migrating a fresh database can take a while**, so it is surfaced as a named install phase rather than as an unexplained wait.
 
 After that, the `critical` task asks for the admin password. Once set, the service starts and the interface is ready to sign in to.
 

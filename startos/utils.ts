@@ -21,9 +21,10 @@ export const newConsumeLocation = 'Files/paperless/consume'
 export const defaultStorageSubfolder = 'paperless/documents'
 export const defaultStorageLocation = 'Files/paperless/documents'
 export const mediaMountpoint = '/usr/src/paperless/media'
+export const exportMountpoint = '/usr/src/paperless/export'
 export const srcDir = '/usr/src/paperless/src'
 
-// Both the main daemon and the set-admin-password action mount the same set of
+// Every subcontainer that runs manage.py mounts the same set of
 // state dirs — Django's startup checks verify all of these paths exist and are
 // writable, so manage.py refuses to run in a container missing any of them.
 export const paperlessMounts = sdk.Mounts.of()
@@ -48,7 +49,7 @@ export const paperlessMounts = sdk.Mounts.of()
   .mountVolume({
     volumeId: 'main',
     subpath: 'export',
-    mountpoint: '/usr/src/paperless/export',
+    mountpoint: exportMountpoint,
     readonly: false,
   })
 
