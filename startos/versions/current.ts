@@ -1,7 +1,7 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '3.5.1:0',
+  version: '3.5.1:1',
   releaseNotes: {
     en_US: `Updated Paperless-ngx to 3.5.1. Fixes AI chat answers not streaming, background tasks failing when the audit log is disabled, and the bulk edit selection being cleared after queuing an operation. [Full release notes](https://github.com/paperless-ngx/paperless-ngx/releases/tag/v3.5.1)`,
     es_ES: `Paperless-ngx actualizado a 3.5.1. Corrige que las respuestas del chat de IA no se transmitieran progresivamente, los fallos de tareas en segundo plano con el registro de auditoría desactivado y la pérdida de la selección de edición masiva tras poner una operación en cola. [Notas completas](https://github.com/paperless-ngx/paperless-ngx/releases/tag/v3.5.1)`,

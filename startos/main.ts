@@ -24,11 +24,6 @@ export const uiUrls = (host: utils.FilledHost | null) => {
   return iface ? iface.addressInfo.format('urlstring') : []
 }
 
-// The redis + paperless daemon chain. setupMain returns it to run the service;
-// bootstrapDatabase (on install) calls .runUntilSuccess() on the same chain so
-// Paperless migrates and creates its database before the first real start —
-// which lets the critical Set Admin Password task succeed against an existing DB
-// instead of erroring on a never-started install.
 export function paperlessDaemons(
   effects: T.Effects,
   {

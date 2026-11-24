@@ -1,38 +1,59 @@
 import { storeJson } from '../fileModels/store.json'
 import { i18n } from '../i18n'
-import { uiHostId } from '../interfaces'
-import { paperlessDaemons, uiUrls } from '../main'
 import { sdk } from '../sdk'
+import {
+  consumeMountpoint,
+  dataMountpoint,
+  exportMountpoint,
+  mediaMountpoint,
+  paperlessMounts,
+  srcDir,
+} from '../utils'
 
 export const bootstrapDatabase = sdk.setupOnInit(
   async (effects, kind, progress) => {
     if (kind !== 'install') return
 
-    // Boot the full stack once so Paperless runs its migrations and creates the
-    // SQLite database, then tear it down. setAdminPassword is a critical task —
-    // it operates on that database while the service is stopped — so the DB has
-    // to exist before the user can run it. The daemon's `ready` check only passes
-    // after Paperless has finished migrating and is listening, which is exactly
-    // when the database is in place. Surface it as an install phase — migrating
-    // on first boot can take a while on slower hardware.
     const phase = progress.addPhase(i18n('Initializing Paperless-ngx database'))
     phase.start()
-    // .once(): a .const() here would re-run the bootstrap against the live service.
+    // .once(): a .const() here would re-run the bootstrap on every store change.
     const secretKey = await storeJson.read((s) => s.secretKey).once()
     if (!secretKey) {
       throw new Error('store.json is missing the generated secret key')
     }
-    await paperlessDaemons(effects, {
-      secretKey,
-      trustedOrigins: (
-        await sdk.host.getOwn(effects, uiHostId, uiUrls).once()
-      ).join(','),
-      consumeFolder: null,
-      mediaFolder: null,
-      consumeRecursive: false,
-      consumeSubdirsAsTags: false,
-      filenameFormat: '',
-    }).runUntilSuccess(300_000)
+    await sdk.SubContainer.withTemp(
+      effects,
+      { imageId: 'paperless' },
+      paperlessMounts,
+      'bootstrap-database',
+      async (sub) => {
+        await sub.execFail(
+          [
+            'chown',
+            'paperless:paperless',
+            dataMountpoint,
+            mediaMountpoint,
+            consumeMountpoint,
+            exportMountpoint,
+          ],
+          { user: 'root' },
+        )
+        await sub.execFail(
+          ['python3', 'manage.py', 'migrate', '--skip-checks', '--no-input'],
+          {
+            cwd: srcDir,
+            user: 'paperless',
+            timeout: 300_000,
+            env: {
+              PAPERLESS_SECRET_KEY: secretKey,
+              // Redis is not running here; post-migrate signals write to the cache.
+              PAPERLESS_CACHE_BACKEND:
+                'django.core.cache.backends.locmem.LocMemCache',
+            },
+          },
+        )
+      },
+    )
     phase.complete()
   },
 )
